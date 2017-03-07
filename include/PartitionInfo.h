@@ -17,7 +17,7 @@ namespace rawio
 {
     class PartitionInfo {
     public:
-        explicit PartitionInfo( const wchar_t letter, const TPhysicalDiskId diskId );
+        explicit PartitionInfo( const wchar_t letter, const TPhysicalDiskId diskId, const uint64_t size );
         
         /**
          * Get partition letter
@@ -37,6 +37,14 @@ namespace rawio
             return letter == getLetter();
         }
         
+        /**
+         * Get the partition size in bytes
+         * @return 
+         */
+        uint64_t getSize() const
+        {
+            return m_size;
+        }
         
         /**
          * Get Physical Device id
@@ -52,6 +60,9 @@ namespace rawio
     private:        
         /* Logical Partition letter */
         wchar_t m_letter;
+        
+        /* Partition size in bytes */
+        uint64_t m_size;
         
         /* Physical Device Id */
         TPhysicalDiskId m_phyDevId;

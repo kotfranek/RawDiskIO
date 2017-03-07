@@ -62,18 +62,20 @@ void File::flush()
     }
 }
 
-void File::write( const void* src, const size_t bytes )
+size_t File::write( const void* src, const size_t bytes )
 {
-    DWORD writtenB = 0U;
-    
+    DWORD writtenB = 0U;    
     ::WriteFile( m_file, src, bytes, &writtenB, NULL );
+    
+    return writtenB;
 }
 
-void File::read( void* dst, const size_t bytes ) const
+size_t File::read( void* dst, const size_t bytes ) const
 {
-    DWORD writtenB = 0U;
+    DWORD readB = 0U;    
+    ::ReadFile( m_file, dst, bytes, &readB, NULL );
     
-    ::ReadFile( m_file, dst, bytes, &writtenB, NULL );
+    return readB;
 }
 
 

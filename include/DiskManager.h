@@ -46,7 +46,15 @@ namespace rawio
          * @param partition
          * @return 
          */
-        PhysicalDiskInfo getDevice( const PartitionInfo& partition ) const;
+        PhysicalDiskInfo getDiskInfo( const PartitionInfo& partition ) const;
+        
+        /**
+         * Dump partition into file
+         * @param partition
+         * @param file
+         * @return 
+         */
+        bool dump( const PartitionInfo& partition, const ::std::wstring& file ) const;
                 
         virtual ~DiskManager();
                 

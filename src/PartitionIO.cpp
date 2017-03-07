@@ -41,6 +41,8 @@
 namespace
 {
     const wchar_t VOLUME_PATH[] = L"\\\\.\\";
+    
+    const size_t SEGMENT = 10 * 1024U;
 
     ::std::wstring mkSysPath( const wchar_t letter )
     {
@@ -69,12 +71,13 @@ uint64_t PartitionIO::getLength() const
 {
     uint64_t result = 0U;
     
-    PARTITION_INFORMATION_EX pInfo;
+    GET_LENGTH_INFORMATION pInfo;
     
-    if ( DeviceFile().ioCtl( ::mkSysPath( m_letter ), IOCTL_DISK_GET_PARTITION_INFO_EX , pInfo ) )
+    if ( DeviceFile().ioCtl( ::mkSysPath( m_letter ), IOCTL_DISK_GET_LENGTH_INFO , pInfo ) )
     {                        
-        result = pInfo.PartitionLength.QuadPart;
-    }     
+        result = pInfo.Length.QuadPart;
+    }    
+    else
     {
         LOG_E( L"Unable to query '" << m_letter << L":' volume" );
     }    
@@ -122,10 +125,12 @@ bool PartitionIO::dump( const ::std::wstring& file )
             
             if( output.open( file, GENERIC_WRITE, 0, CREATE_ALWAYS ) )
             {
-                uint8_t buffer[ 1024 ] = {0};
-                
-                volume.read( buffer, 1024 );
-                output.write( buffer, 1024 );
+                uint8_t buffer[ SEGMENT ] = {0};
+                                
+                while ( 0U != volume.read( buffer, SEGMENT ) )
+                {
+                    output.write( buffer, SEGMENT );    
+                }                
                 
                 result = true;    
             }            

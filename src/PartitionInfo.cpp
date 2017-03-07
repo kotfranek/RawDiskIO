@@ -16,8 +16,9 @@
 namespace rawio
 {
 
-PartitionInfo::PartitionInfo( const wchar_t letter, const TPhysicalDiskId diskId ) 
+PartitionInfo::PartitionInfo( const wchar_t letter, const TPhysicalDiskId diskId, const uint64_t size ) 
     : m_letter( letter )
+    , m_size( size )
     , m_phyDevId( diskId )
 {
 }

@@ -49,14 +49,14 @@ namespace rawio
          * @param src Source buffer
          * @param bytes
          */
-        void write( const void* src, const size_t bytes );
+        size_t write( const void* src, const size_t bytes );
         
         /**
          * Read from file to the given buffer
          * @param src
          * @param bytes
          */
-        void read( void* dst, const size_t bytes ) const;
+        size_t read( void* dst, const size_t bytes ) const;
                         
         virtual ~File()
         {

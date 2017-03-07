@@ -19,7 +19,7 @@ int main(void)
         
         while ( i != partitions.end() )
         {
-            ::rawio::PhysicalDiskInfo info = diskIo.getDevice( (*i) );            
+            ::rawio::PhysicalDiskInfo info = diskIo.getDiskInfo( (*i) );            
             ::std::wcout << L"P->" << (*i).getLetter() << L":" << ::std::endl;            
             ::std::wcout << L"D->" << info.getId() << L", size = " << info.geometry().sizeB() / ( 1024U * 1024U ) << L" MB" << ::std::endl;            
             

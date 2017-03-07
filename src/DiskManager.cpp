@@ -80,17 +80,18 @@ namespace rawio
         userPath.append( L":\\" );
         
         PartitionIO partIo( letter );
-        const TPhysicalDiskId diskNum = partIo.getDiskId();
+        const auto diskNum = partIo.getDiskId();
+        const auto partSize = partIo.getLength();
         
         if ( diskNum != INVALID_DISKID )
         {
             LOG_I( L"Adding Disk No.: " << diskNum << L" / Part.: " 
                     << letter << L" / Type: " 
                     << GetDriveTypeW( userPath.c_str() )
-                    << L" / Size: " << partIo.getLength() / ( 1024 * 1024 ) );
+                    << L" / Size: " << partSize / ( 1024 * 1024 ) );
 
             m_disks.insert( diskNum );
-            m_partitions.push_back( PartitionInfo( letter, diskNum ) );
+            m_partitions.push_back( PartitionInfo( letter, diskNum, partSize ) );
         }
         else
         {
@@ -98,7 +99,7 @@ namespace rawio
         }                        
     }
         
-    PhysicalDiskInfo DiskManager::getDevice( const PartitionInfo& partition ) const
+    PhysicalDiskInfo DiskManager::getDiskInfo( const PartitionInfo& partition ) const
     {        
         const TPhysicalDiskId id = partition.getDiskId();
         DiskGeometry geom;
@@ -119,6 +120,16 @@ namespace rawio
         }    
         
         return PhysicalDiskInfo( id, geom );
+    }
+    
+    
+    bool DiskManager::dump( const PartitionInfo& partition, const ::std::wstring& file ) const
+    {
+        bool result = false;
+        
+        
+        
+        return result;
     }
     
     
