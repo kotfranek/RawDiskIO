@@ -65,6 +65,24 @@ PartitionIO::PartitionIO( const PartitionInfo& info )
 }
 
 
+uint64_t PartitionIO::getLength() const
+{
+    uint64_t result = 0U;
+    
+    PARTITION_INFORMATION_EX pInfo;
+    
+    if ( DeviceFile().ioCtl( ::mkSysPath( m_letter ), IOCTL_DISK_GET_PARTITION_INFO_EX , pInfo ) )
+    {                        
+        result = pInfo.PartitionLength.QuadPart;
+    }     
+    {
+        LOG_E( L"Unable to query '" << m_letter << L":' volume" );
+    }    
+    
+    return result;
+}
+
+
 TPhysicalDiskId PartitionIO::getDiskId() const
 {
     TPhysicalDiskId result = INVALID_DISKID;    
@@ -98,17 +116,25 @@ bool PartitionIO::dump( const ::std::wstring& file )
         volume.close();
         
         volume.open( ::mkSysPath( m_letter ) );
-        if ( volume.ioCtl( FSCTL_LOCK_VOLUME ) ) //&& volume.ioCtl( FSCTL_DISMOUNT_VOLUME ) )
+        if ( volume.ioCtl( FSCTL_LOCK_VOLUME ) && volume.ioCtl( FSCTL_DISMOUNT_VOLUME ) )
         {
-                result = true;
-                system("pause");
+            File output;
+            
+            if( output.open( file, GENERIC_WRITE, 0, CREATE_ALWAYS ) )
+            {
+                uint8_t buffer[ 1024 ] = {0};
+                
+                volume.read( buffer, 1024 );
+                output.write( buffer, 1024 );
+                
+                result = true;    
+            }            
         }
         else
         {
             LOG_E( L"Partition '" << m_letter << L":' not locked" );
-        }
-    }
-            
+        }                
+    }            
     return result;    
 }
 

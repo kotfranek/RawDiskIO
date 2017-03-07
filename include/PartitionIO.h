@@ -54,6 +54,11 @@ namespace rawio
         TPhysicalDiskId getDiskId() const;
         
         /**
+         * Get partition length in bytes
+         */
+        uint64_t getLength() const;
+        
+        /**
          * Dump the raw partition content
          * @param file
          * @return 

@@ -86,7 +86,8 @@ namespace rawio
         {
             LOG_I( L"Adding Disk No.: " << diskNum << L" / Part.: " 
                     << letter << L" / Type: " 
-                    << GetDriveTypeW( userPath.c_str() ) );
+                    << GetDriveTypeW( userPath.c_str() )
+                    << L" / Size: " << partIo.getLength() / ( 1024 * 1024 ) );
 
             m_disks.insert( diskNum );
             m_partitions.push_back( PartitionInfo( letter, diskNum ) );
@@ -114,8 +115,6 @@ namespace rawio
             if ( phyDisk.ioCtl( IOCTL_DISK_GET_DRIVE_GEOMETRY, win32Geom ) )
             {                  
                 geom = ::makeGeometry( win32Geom );
-                LOG_I( L"SecCnt.: " << geom.m_sectorCount );        
-                LOG_I( L"SecSize: " << geom.m_sectorSize );
             }
         }    
         

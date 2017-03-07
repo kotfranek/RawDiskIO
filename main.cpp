@@ -38,6 +38,27 @@ int main(void)
             ++i;
         }
         
+        wchar_t volume[ 1024 ];
+        const HANDLE hnd = FindFirstVolumeW( volume, sizeof( volume ) );
+        
+        do
+        {
+            wchar_t DeviceName[ 1024 ];
+            auto Index = wcslen(volume) - 1;
+            //  QueryDosDeviceW does not allow a trailing backslash,
+            //  so temporarily remove it.
+            volume[Index] = L'\0';
+
+            auto CharCount = QueryDosDeviceW(&volume[4], DeviceName, ARRAYSIZE(DeviceName));            
+            ::std::wcout << L"Volume '" << volume << L"'" << ::std::endl;
+            ::std::wcout << L"Device '" << DeviceName << L"'" << ::std::endl;
+            
+            volume[Index] = L'\\';            
+        } 
+        while ( 0 != FindNextVolumeW( hnd, volume, sizeof( volume ) ) );
+        
+        FindVolumeClose( hnd );
+        
         //::rawio::PhysicalDiskIO phyDisk( pendriveE );
     }
     

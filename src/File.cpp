@@ -23,7 +23,8 @@ File::File()
 }
 
 
-bool File::open(const ::std::wstring& path, const DWORD access , const DWORD share )
+bool File::open(const ::std::wstring& path, const DWORD access
+    , const DWORD share, const DWORD creation )
 {
     bool result = false;
     
@@ -32,7 +33,7 @@ bool File::open(const ::std::wstring& path, const DWORD access , const DWORD sha
         m_file = ::CreateFileW( path.c_str(), access
                 , share
                 , NULL
-                , OPEN_EXISTING
+                , creation
                 , 0
                 , NULL );
         
@@ -42,7 +43,7 @@ bool File::open(const ::std::wstring& path, const DWORD access , const DWORD sha
         }
         else
         {
-            LOG_E( L"Error opening [" << path << L"]: " << ::GetLastError() );
+            LOG_E( L"Error opening '" << path << L"': " << ::GetLastError() );
         }
     }
     
@@ -60,6 +61,21 @@ void File::flush()
         }
     }
 }
+
+void File::write( const void* src, const size_t bytes )
+{
+    DWORD writtenB = 0U;
+    
+    ::WriteFile( m_file, src, bytes, &writtenB, NULL );
+}
+
+void File::read( void* dst, const size_t bytes ) const
+{
+    DWORD writtenB = 0U;
+    
+    ::ReadFile( m_file, dst, bytes, &writtenB, NULL );
+}
+
 
 void File::close()
 {

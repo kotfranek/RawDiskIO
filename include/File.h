@@ -31,7 +31,7 @@ namespace rawio
          * @return true if successful
          */
         bool open( const ::std::wstring& path, const DWORD access
-            , const DWORD share = 0 );
+            , const DWORD share = 0, const DWORD creation = OPEN_EXISTING );
         
         /**
          * Flush the buffers
@@ -42,6 +42,21 @@ namespace rawio
          * Close the File
          */
         void close();
+        
+        
+        /**
+         * Write N bytes into the file
+         * @param src Source buffer
+         * @param bytes
+         */
+        void write( const void* src, const size_t bytes );
+        
+        /**
+         * Read from file to the given buffer
+         * @param src
+         * @param bytes
+         */
+        void read( void* dst, const size_t bytes ) const;
                         
         virtual ~File()
         {
