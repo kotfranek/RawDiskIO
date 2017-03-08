@@ -41,7 +41,11 @@ namespace rawio
     class IProgressListener
     {
     public:
-        void data( const size_t segmentsRead );
+        /**
+         * Data Progress listener
+         * @param segmentsRead number of segments transferred
+         */
+        virtual void data( const size_t segmentsRead ) = 0;
     protected:
         IProgressListener()
         {            
