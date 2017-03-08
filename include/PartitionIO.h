@@ -63,7 +63,14 @@ namespace rawio
          * @param file
          * @return 
          */
-        bool dump( const ::std::wstring& file );
+        bool dump( const ::std::wstring& file ) const;
+        
+        /**
+         * Load the partition from the given file containing RAW data
+         * @param file source
+         * @return 
+         */
+        bool load( const ::std::wstring& file );
         
         virtual ~PartitionIO();
     private:

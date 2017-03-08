@@ -23,10 +23,9 @@ int main(void)
             ::std::wcout << L"P->" << (*i).getLetter() << L":" << ::std::endl;            
             ::std::wcout << L"D->" << info.getId() << L", size = " << info.geometry().sizeB() / ( 1024U * 1024U ) << L" MB" << ::std::endl;            
             
-            if ( (*i).getLetter() == 'E' )
+            if ( (*i).getLetter() == 'D' )
             {
-                ::rawio::PartitionIO( (*i) ).dump( L"C:\\duupaaaa.txt" );
-                //diskIo.umount( (*i) );
+                diskIo.load( (*i), L"C:\\duupaaaa.txt" );
             }
             
             if ( info.geometry().sizeB() < 4000000000 )

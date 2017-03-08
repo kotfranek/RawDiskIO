@@ -20,6 +20,8 @@
 
 namespace rawio
 {
+    class IProgressListener;
+    
     class DiskManager 
     {
         typedef ::std::unordered_set<TPhysicalDiskId> TDisksSet;
@@ -54,7 +56,18 @@ namespace rawio
          * @param file
          * @return 
          */
-        bool dump( const PartitionInfo& partition, const ::std::wstring& file ) const;
+        bool dump( const PartitionInfo& partition, const ::std::wstring& file
+            , const IProgressListener* listener = NULL ) const;
+        
+        /**
+         * Load raw partition data from file
+         * @param partition
+         * @param file
+         * @param listener
+         * @return 
+         */
+        bool load( const PartitionInfo& partition, const ::std::wstring& file
+            , const IProgressListener* listener = NULL ) const;
                 
         virtual ~DiskManager();
                 

@@ -29,7 +29,7 @@ namespace rawio
          * @param path File location
          * @return true if successful
          */        
-        bool open(const ::std::wstring& path, const bool readOnly = true);
+        bool open(const ::std::wstring& path, const bool writable = false);
         
         
         bool ioCtl( const DWORD ctlCode, void* output = NULL, size_t size = 0U );

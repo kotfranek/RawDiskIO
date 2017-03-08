@@ -22,6 +22,7 @@
 #include "DiskGeometry.h"
 #include "DeviceFile.h"
 #include "PartitionIO.h"
+#include "api/IProgressListener.h"
 
 namespace
 {
@@ -123,16 +124,17 @@ namespace rawio
     }
     
     
-    bool DiskManager::dump( const PartitionInfo& partition, const ::std::wstring& file ) const
+    bool DiskManager::dump( const PartitionInfo& partition, const ::std::wstring& file
+        , const IProgressListener* listener ) const
     {
-        bool result = false;
-        
-        
-        
-        return result;
+        return PartitionIO( partition ).dump( file );
     }
-    
-    
+
+    bool DiskManager::load(const PartitionInfo& partition, const ::std::wstring& file, const IProgressListener* listener) const 
+    {
+        return PartitionIO( partition ).load( file );
+    }
+        
     DiskManager::~DiskManager() 
     {
     }

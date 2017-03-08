@@ -42,15 +42,20 @@ namespace
 {
     const wchar_t VOLUME_PATH[] = L"\\\\.\\";
     
-    const size_t SEGMENT = 10 * 1024U;
+    const size_t SEGMENT = 32 * 1024U;
 
-    ::std::wstring mkSysPath( const wchar_t letter )
+    ::std::wstring MkSysPath( const wchar_t letter )
     {
         ::std::wstring sysPath( ::VOLUME_PATH );
         sysPath.push_back( letter );
         sysPath.push_back( L':' );          
         
         return ::std::move( sysPath );
+    }
+    
+    bool LockAndDismount( ::rawio::DeviceFile& volume )
+    {
+        return volume.ioCtl( FSCTL_LOCK_VOLUME ) && volume.ioCtl( FSCTL_DISMOUNT_VOLUME );
     }
 }
 
@@ -73,7 +78,7 @@ uint64_t PartitionIO::getLength() const
     
     GET_LENGTH_INFORMATION pInfo;
     
-    if ( DeviceFile().ioCtl( ::mkSysPath( m_letter ), IOCTL_DISK_GET_LENGTH_INFO , pInfo ) )
+    if ( DeviceFile().ioCtl( ::MkSysPath( m_letter ), IOCTL_DISK_GET_LENGTH_INFO , pInfo ) )
     {                        
         result = pInfo.Length.QuadPart;
     }    
@@ -91,7 +96,7 @@ TPhysicalDiskId PartitionIO::getDiskId() const
     TPhysicalDiskId result = INVALID_DISKID;    
     VOLUME_DISK_EXTENTS extents = { 0 };
     
-    if ( DeviceFile().ioCtl( ::mkSysPath( m_letter ), IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS, extents ) )
+    if ( DeviceFile().ioCtl( ::MkSysPath( m_letter ), IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS, extents ) )
     {                        
         if ( 1U == extents.NumberOfDiskExtents )
         {
@@ -104,26 +109,25 @@ TPhysicalDiskId PartitionIO::getDiskId() const
     }                               
     
     return result;
-}
+    }
 
-
-bool PartitionIO::dump( const ::std::wstring& file )
+bool PartitionIO::dump( const ::std::wstring& file ) const
 {
     bool result = false;
     
     DeviceFile volume;
     
-    if ( volume.open( ::mkSysPath( m_letter ), false ) )        
+    if ( volume.open( ::MkSysPath( m_letter ), true ) )        
     {
         volume.flush();
         volume.close();
         
-        volume.open( ::mkSysPath( m_letter ) );
-        if ( volume.ioCtl( FSCTL_LOCK_VOLUME ) && volume.ioCtl( FSCTL_DISMOUNT_VOLUME ) )
+        volume.open( ::MkSysPath( m_letter ) );
+        if ( ::LockAndDismount( volume ) )
         {
             File output;
             
-            if( output.open( file, GENERIC_WRITE, 0, CREATE_ALWAYS ) )
+            if( output.open( file, GENERIC_WRITE, FILE_SHARE_READ, CREATE_ALWAYS ) )
             {
                 uint8_t buffer[ SEGMENT ] = {0};
                                 
@@ -140,6 +144,38 @@ bool PartitionIO::dump( const ::std::wstring& file )
             LOG_E( L"Partition '" << m_letter << L":' not locked" );
         }                
     }            
+    return result;
+}
+
+bool PartitionIO::load( const ::std::wstring& file )
+{
+    bool result = false;
+    
+    DeviceFile volume;
+            
+    if ( volume.open( ::MkSysPath( m_letter ) ) )
+    {
+        if ( ::LockAndDismount( volume ) )
+        {
+            File input;
+
+            if( input.open( file, GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING ) )
+            {
+                uint8_t buffer[ SEGMENT ] = {0};
+
+                while ( 0U != input.read( buffer, SEGMENT ) )
+                {
+                    volume.write( buffer, SEGMENT );    
+                }                
+                result = true;    
+            }            
+        }
+        else
+        {
+            LOG_E( L"Partition '" << m_letter << L":' not locked" );
+        }                        
+    }
+            
     return result;    
 }
 

@@ -23,9 +23,9 @@ DeviceFile::DeviceFile()
 }
 
 
-bool DeviceFile::open(const ::std::wstring& path, const bool readOnly )
+bool DeviceFile::open(const ::std::wstring& path, const bool writable )
 {
-    const DWORD access = readOnly ? GENERIC_READ : GENERIC_READ | GENERIC_WRITE;
+    const DWORD access = writable ? GENERIC_READ | GENERIC_WRITE : GENERIC_READ;
     return File::open( path, access, FILE_SHARE_READ | FILE_SHARE_WRITE );
 }
 
