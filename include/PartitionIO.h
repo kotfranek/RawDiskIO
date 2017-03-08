@@ -63,7 +63,7 @@ namespace rawio
          * @param file
          * @return 
          */
-        bool dump( const ::std::wstring& file ) const;
+        bool dump(const ::std::wstring& file, const size_t blockSize = 512) const;
         
         /**
          * Load the partition from the given file containing RAW data

@@ -65,7 +65,10 @@ void File::flush()
 size_t File::write( const void* src, const size_t bytes )
 {
     DWORD writtenB = 0U;    
-    ::WriteFile( m_file, src, bytes, &writtenB, NULL );
+    if ( FALSE == ::WriteFile( m_file, src, bytes, &writtenB, NULL ) )
+    {
+        LOG_E( L"Error writing file: " << ::GetLastError() );
+    }
     
     return writtenB;
 }

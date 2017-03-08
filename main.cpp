@@ -2,9 +2,7 @@
 #include <stdio.h>
 #include <iostream>
 
-#include "DiskManager.h"
-#include "PhysicalDiskIO.h"
-#include "PartitionIO.h"
+#include "api/DiskManager.h"
 
 int main(void)
 {

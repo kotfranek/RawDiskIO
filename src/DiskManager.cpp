@@ -16,13 +16,14 @@
 
 #include "Windows.h"
 
+#include "api/DiskManager.h"
+#include "api/IProgressListener.h"
+
 #include "types.h"
 #include "log.h"
-#include "DiskManager.h"
 #include "DiskGeometry.h"
 #include "DeviceFile.h"
 #include "PartitionIO.h"
-#include "api/IProgressListener.h"
 
 namespace
 {

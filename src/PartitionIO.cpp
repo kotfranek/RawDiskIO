@@ -43,7 +43,25 @@ namespace
     const wchar_t VOLUME_PATH[] = L"\\\\.\\";
     
     const size_t SEGMENT = 32 * 1024U;
+    
+    /* Number of blocks to be copied in one hit */
+    const size_t COPY_BLOCKS = 64U;
+    
+    bool CopyFiles( ::rawio::File& dst, const ::rawio::File& src, const size_t blockSize )
+    {
+        const size_t length = blockSize * ::COPY_BLOCKS;
+        uint8_t* buffer = (uint8_t*) ::malloc( length );
 
+        while ( 0U != src.read( buffer, length ) )
+        {
+            dst.write( buffer, length );    
+        }
+        
+        ::free( buffer );
+        
+        return true;
+    }
+    
     ::std::wstring MkSysPath( const wchar_t letter )
     {
         ::std::wstring sysPath( ::VOLUME_PATH );
@@ -111,7 +129,7 @@ TPhysicalDiskId PartitionIO::getDiskId() const
     return result;
     }
 
-bool PartitionIO::dump( const ::std::wstring& file ) const
+bool PartitionIO::dump(const ::std::wstring& file, const size_t blockSize ) const
 {
     bool result = false;
     
@@ -128,15 +146,8 @@ bool PartitionIO::dump( const ::std::wstring& file ) const
             File output;
             
             if( output.open( file, GENERIC_WRITE, FILE_SHARE_READ, CREATE_ALWAYS ) )
-            {
-                uint8_t buffer[ SEGMENT ] = {0};
-                                
-                while ( 0U != volume.read( buffer, SEGMENT ) )
-                {
-                    output.write( buffer, SEGMENT );    
-                }                
-                
-                result = true;    
+            {                            
+                result = ::CopyFiles( output, volume, blockSize );    
             }            
         }
         else
@@ -153,21 +164,15 @@ bool PartitionIO::load( const ::std::wstring& file )
     
     DeviceFile volume;
             
-    if ( volume.open( ::MkSysPath( m_letter ) ) )
+    if ( volume.open( ::MkSysPath( m_letter ), true ) )
     {
         if ( ::LockAndDismount( volume ) )
         {
             File input;
 
             if( input.open( file, GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING ) )
-            {
-                uint8_t buffer[ SEGMENT ] = {0};
-
-                while ( 0U != input.read( buffer, SEGMENT ) )
-                {
-                    volume.write( buffer, SEGMENT );    
-                }                
-                result = true;    
+            {        
+                result = ::CopyFiles( volume, input, 512U );
             }            
         }
         else
