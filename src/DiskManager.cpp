@@ -81,19 +81,18 @@ namespace rawio
         userPath.push_back( letter );
         userPath.append( L":\\" );
         
-        PartitionIO partIo( letter );
-        const auto diskNum = partIo.getDiskId();
-        const auto partSize = partIo.getLength();
+        const auto extents = PartitionIO( letter ).getVolumeLocation();
         
-        if ( diskNum != INVALID_DISKID )
+        if ( extents.m_diskId != INVALID_DISKID )
         {
-            LOG_I( L"Adding Disk No.: " << diskNum << L" / Part.: " 
-                    << letter << L" / Type: " 
-                    << GetDriveTypeW( userPath.c_str() )
-                    << L" / Size: " << partSize / ( 1024 * 1024 ) );
+            LOG_I( L"Adding Disk No.: " << extents.m_diskId 
+                    << L" / Part.: " << letter 
+                    << L" / Type: " << GetDriveTypeW( userPath.c_str() )
+                    << L" / Size: " << extents.m_length / ( 1024 * 1024 )
+                    << L" / Offset: " << extents.m_offset );
 
-            m_disks.insert( diskNum );
-            m_partitions.push_back( PartitionInfo( letter, diskNum, partSize ) );
+            m_disks.insert( extents.m_diskId );
+            m_partitions.push_back( PartitionInfo( letter, extents ) );
         }
         else
         {
@@ -130,8 +129,16 @@ namespace rawio
     {
         return PartitionIO( partition ).dump( file );
     }
+    
+    bool DiskManager::load(const TPhysicalDiskId id, const ::std::wstring& file
+        , const IProgressListener* listener) const 
+    {
+        return false;
+    }
+    
 
-    bool DiskManager::load(const PartitionInfo& partition, const ::std::wstring& file, const IProgressListener* listener) const 
+    bool DiskManager::load(const PartitionInfo& partition, const ::std::wstring& file
+        , const IProgressListener* listener) const 
     {
         return PartitionIO( partition ).load( file );
     }

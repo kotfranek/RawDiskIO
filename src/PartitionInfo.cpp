@@ -12,14 +12,14 @@
  */
 
 #include "PartitionInfo.h"
+#include "VolumeLocation.h"
 
 namespace rawio
 {
 
-PartitionInfo::PartitionInfo( const wchar_t letter, const TPhysicalDiskId diskId, const uint64_t size ) 
+PartitionInfo::PartitionInfo( const wchar_t letter, const VolumeLocation& location ) 
     : m_letter( letter )
-    , m_size( size )
-    , m_phyDevId( diskId )
+    , m_vLoc( location )
 {
 }
 

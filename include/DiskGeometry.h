@@ -35,8 +35,6 @@ namespace rawio
         uint64_t m_sectorCount;
         uint32_t m_sectorSize;
     private:
-        //DiskGeometry(const DiskGeometry& orig);
-        //DiskGeometry& operator=( const DiskGeometry& );
     };
 };
 #endif /* DISKGEOMETRY_H */

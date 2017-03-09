@@ -21,7 +21,7 @@ int main(void)
             ::std::wcout << L"P->" << (*i).getLetter() << L":" << ::std::endl;            
             ::std::wcout << L"D->" << info.getId() << L", size = " << info.geometry().sizeB() / ( 1024U * 1024U ) << L" MB" << ::std::endl;            
             
-            if ( (*i).getLetter() == 'D' )
+            if ( (*i).getLetter() == 'N' )
             {
                 diskIo.load( (*i), L"C:\\Projects\\temp\\2017-03-02-raspbian-jessie-lite.img" );
             }            

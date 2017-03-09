@@ -68,6 +68,16 @@ namespace rawio
          */
         bool load( const PartitionInfo& partition, const ::std::wstring& file
             , const IProgressListener* listener = NULL ) const;
+        
+        /**
+         * Load raw disk image from file
+         * @param disk id
+         * @param file
+         * @param listener
+         * @return 
+         */
+        bool load( const TPhysicalDiskId id, const ::std::wstring& file
+            , const IProgressListener* listener = NULL ) const;        
                 
         virtual ~DiskManager();
                 

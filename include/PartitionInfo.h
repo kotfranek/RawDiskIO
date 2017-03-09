@@ -12,12 +12,13 @@
 #include <vector>
 
 #include "types.h"
+#include "VolumeLocation.h"
 
 namespace rawio
 {
     class PartitionInfo {
     public:
-        explicit PartitionInfo( const wchar_t letter, const TPhysicalDiskId diskId, const uint64_t size );
+        explicit PartitionInfo( const wchar_t letter, const VolumeLocation& location );
         
         /**
          * Get partition letter
@@ -43,7 +44,7 @@ namespace rawio
          */
         uint64_t getSize() const
         {
-            return m_size;
+            return m_vLoc.m_length;
         }
         
         /**
@@ -52,7 +53,7 @@ namespace rawio
          */
         TPhysicalDiskId getDiskId() const
         {
-            return m_phyDevId;
+            return m_vLoc.m_diskId;
         }
         
         
@@ -61,11 +62,8 @@ namespace rawio
         /* Logical Partition letter */
         wchar_t m_letter;
         
-        /* Partition size in bytes */
-        uint64_t m_size;
-        
-        /* Physical Device Id */
-        TPhysicalDiskId m_phyDevId;
+        /* Volume location */
+        VolumeLocation m_vLoc;
     };
     
     typedef ::std::vector<PartitionInfo> TPartitionArray;    

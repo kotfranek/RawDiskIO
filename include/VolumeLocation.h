@@ -25,68 +25,47 @@
  */
 
 /* 
- * File:   PartitionIO.h
+ * File:   VolumeLocation.h
  * Author: p.podwapinski
  *
- * Created on March 7, 2017, 11:06 AM
+ * Created on March 9, 2017, 2:30 PM
  */
 
-#ifndef PARTITIONIO_H
-#define PARTITIONIO_H
+#ifndef VOLUMELOCATION_H
+#define VOLUMELOCATION_H
 
-#include <string>
 #include "types.h"
-#include "VolumeLocation.h"
 
 namespace rawio
 {
-    class PartitionInfo;
-    
-    class PartitionIO 
+    class VolumeLocation
     {
     public:
-        PartitionIO( const wchar_t letter );
-        PartitionIO( const PartitionInfo& info );
+        explicit VolumeLocation( const TPhysicalDiskId id, const uint64_t offset, const uint64_t length )
+            : m_diskId( id )
+            , m_offset( offset )
+            , m_length( length )
+        {            
+        }
+            
+        uint32_t lengthKB() const
+        {
+            return m_length / 1024U;
+        }
         
-        /**
-         * Retrieve the volume location set
-         * @return A copy of VolumeLocation data
-         */
-        VolumeLocation getVolumeLocation() const;
+        uint32_t lengthMB() const
+        {
+            return lengthKB() / 1024U;
+        }
         
-        /**
-         * Retrieve the PhysicalDisk Id
-         * @return 
-         */
-        TPhysicalDiskId getDiskId() const;
-        
-        /**
-         * Get partition length in bytes
-         */
-        uint64_t getLength() const;
-        
-        /**
-         * Dump the raw partition content
-         * @param file
-         * @return 
-         */
-        bool dump(const ::std::wstring& file, const size_t blockSize = 512) const;
-        
-        /**
-         * Load the partition from the given file containing RAW data
-         * @param file source
-         * @return 
-         */
-        bool load( const ::std::wstring& file );
-        
-        virtual ~PartitionIO();
-    private:
-        PartitionIO(const PartitionIO& orig);
-        
-        /* Partition */
-        const wchar_t m_letter;
+        /* Physical Disk Id */
+        const TPhysicalDiskId m_diskId;
+        /* Volume offset */
+        const uint64_t m_offset;
+        /* Volume Length */
+        const uint64_t m_length;
     };
+}
 
-};
-#endif /* PARTITIONIO_H */
+#endif /* VOLUMELOCATION_H */
 

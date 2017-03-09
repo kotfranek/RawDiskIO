@@ -87,7 +87,33 @@ PartitionIO::PartitionIO(const wchar_t letter)
 PartitionIO::PartitionIO( const PartitionInfo& info )
     : PartitionIO( info.getLetter() )
 {    
+    }
+
+VolumeLocation PartitionIO::getVolumeLocation() const 
+{
+    TPhysicalDiskId id = INVALID_DISKID;
+    uint64_t offset = 0U;
+    uint64_t length = 0U;
+    
+    VOLUME_DISK_EXTENTS extents = { 0 };
+    
+    if ( DeviceFile().ioCtl( ::MkSysPath( m_letter ), IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS, extents ) )
+    {                        
+        if ( 1U == extents.NumberOfDiskExtents )
+        {
+            id = extents.Extents[0].DiskNumber;
+            offset = extents.Extents[0].StartingOffset.QuadPart;
+            length = extents.Extents[0].ExtentLength.QuadPart;
+        }
+        else
+        {
+            LOG_E( L"Partition '" << m_letter << L":' split between more disks, not supported" );
+        }
+    }        
+    
+    return VolumeLocation( id, offset, length );
 }
+
 
 
 uint64_t PartitionIO::getLength() const
