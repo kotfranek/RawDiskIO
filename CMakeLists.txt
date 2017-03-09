@@ -8,13 +8,15 @@ project( "RawDiskIO" )
 set( CPP_COMPILE_FLAGS "-g -Wall -std=c++11" )
 set( CPP_LINK_FLAGS "-pthread" )
 
+set( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -o3 -s")
+
 # Header files locations
 include_directories(
     include
 )
 
 
-add_library( rawdiskio STATIC
+add_library( rawdiskio SHARED
     src/DiskGeometry.cpp
     src/DiskManager.cpp
     src/PartitionInfo.cpp
@@ -24,9 +26,6 @@ add_library( rawdiskio STATIC
     src/DeviceFile.cpp
     src/File.cpp
 )
-
-
-
 
 # Demo application: sources
 add_executable( rawdiskio-d
