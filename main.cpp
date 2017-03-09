@@ -23,14 +23,8 @@ int main(void)
             
             if ( (*i).getLetter() == 'D' )
             {
-                diskIo.load( (*i), L"C:\\duupaaaa.txt" );
-            }
-            
-            if ( info.geometry().sizeB() < 4000000000 )
-            {
-                pendriveE = info;
-                ::std::wcout << L"Will use disk '" << info.getId() << L"'" << ::std::endl;
-            }
+                diskIo.load( (*i), L"C:\\Projects\\temp\\2017-03-02-raspbian-jessie-lite.img" );
+            }            
             
             ++i;
         }

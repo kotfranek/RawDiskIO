@@ -16,6 +16,18 @@
 
 namespace rawio 
 {
+    
+const File::OpenParameters DeviceFile::DEV_READ = { 
+    GENERIC_READ, 
+    FILE_SHARE_READ | FILE_SHARE_WRITE,
+    OPEN_EXISTING
+    };
+
+const File::OpenParameters DeviceFile::DEV_WRITE = { 
+    GENERIC_READ | GENERIC_WRITE, 
+    FILE_SHARE_READ | FILE_SHARE_WRITE,
+    OPEN_EXISTING
+    };
 
 DeviceFile::DeviceFile() 
     : File()
@@ -25,8 +37,8 @@ DeviceFile::DeviceFile()
 
 bool DeviceFile::open(const ::std::wstring& path, const bool writable )
 {
-    const DWORD access = writable ? GENERIC_READ | GENERIC_WRITE : GENERIC_READ;
-    return File::open( path, access, FILE_SHARE_READ | FILE_SHARE_WRITE );
+    const OpenParameters& openParams = writable ? DEV_WRITE : DEV_READ;
+    return File::open( path, openParams );
 }
 
 bool DeviceFile::ioCtl( const DWORD ctlCode, void* output, size_t size ) 

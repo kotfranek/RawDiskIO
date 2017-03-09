@@ -145,7 +145,7 @@ bool PartitionIO::dump(const ::std::wstring& file, const size_t blockSize ) cons
         {
             File output;
             
-            if( output.open( file, GENERIC_WRITE, FILE_SHARE_READ, CREATE_ALWAYS ) )
+            if( output.open( file, File::WRITE_NEW ) )
             {                            
                 result = ::CopyFiles( output, volume, blockSize );    
             }            
@@ -170,7 +170,7 @@ bool PartitionIO::load( const ::std::wstring& file )
         {
             File input;
 
-            if( input.open( file, GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING ) )
+            if( input.open( file, File::READ_EXISTING ) )
             {        
                 result = ::CopyFiles( volume, input, 512U );
             }            

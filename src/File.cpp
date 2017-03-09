@@ -16,24 +16,38 @@
 
 namespace rawio
 {
+    
+const File::OpenParameters File::READ_EXISTING = { 
+    GENERIC_READ, 
+    FILE_SHARE_READ, 
+    OPEN_EXISTING };
 
+const File::OpenParameters File::WRITE_EXISTING = { 
+    GENERIC_WRITE, 
+    FILE_SHARE_READ, 
+    OPEN_EXISTING };
+
+const File::OpenParameters File::WRITE_NEW = {
+    GENERIC_WRITE, 
+    FILE_SHARE_READ, 
+    CREATE_ALWAYS };
+    
 File::File() 
     : m_file( INVALID_HANDLE_VALUE )
 {
 }
 
 
-bool File::open(const ::std::wstring& path, const DWORD access
-    , const DWORD share, const DWORD creation )
+bool File::open(const ::std::wstring& path, const OpenParameters& params )
 {
     bool result = false;
     
     if ( m_file == INVALID_HANDLE_VALUE && !path.empty() )
     {
-        m_file = ::CreateFileW( path.c_str(), access
-                , share
+        m_file = ::CreateFileW( path.c_str(), params.m_access
+                , params.m_share
                 , NULL
-                , creation
+                , params.m_creation
                 , 0
                 , NULL );
         
@@ -90,7 +104,5 @@ void File::close()
         m_file = INVALID_HANDLE_VALUE;
     }
 }
-
-
 
 };

@@ -22,6 +22,13 @@ namespace rawio
     class DeviceFile : public File
     {
     public:
+        
+        /* Set of parameters for reading a device file */
+        static const OpenParameters DEV_READ;
+        
+        /* Set of parameters for writing to a device file */
+        static const OpenParameters DEV_WRITE;
+        
         DeviceFile();
                 
         /**

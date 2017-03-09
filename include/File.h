@@ -23,6 +23,18 @@ namespace rawio
     class File 
     {
     public:
+        
+        struct OpenParameters
+        {
+            DWORD m_access;
+            DWORD m_share;
+            DWORD m_creation;
+        };
+        
+        static const OpenParameters READ_EXISTING;
+        static const OpenParameters WRITE_EXISTING;
+        static const OpenParameters WRITE_NEW;
+        
         File();    
         
         /**
@@ -30,8 +42,7 @@ namespace rawio
          * @param path File location
          * @return true if successful
          */
-        bool open( const ::std::wstring& path, const DWORD access
-            , const DWORD share = 0, const DWORD creation = OPEN_EXISTING );
+        bool open( const ::std::wstring& path, const OpenParameters& params );
         
         /**
          * Flush the buffers
