@@ -27,9 +27,23 @@
 
 namespace
 {
+    /* Handle maximum 64 disks */
+    const size_t MAX_PHY_DISK_COUNT = 64U;
+    
+    /* Handle maximum 32 partitions per disk */
+    const size_t MAX_PARTITION_COUNT = 32U;
+    
+    
     const size_t MAX_DRIVES_COUNT = 'Z'-'A';
     
-    const wchar_t P_DRIVE_PATH[] = L"\\\\.\\PhysicalDrive";
+    /* Generic Physical Drive path */
+    const wchar_t PHY_DRIVE_PATH[] = L"\\\\.\\PhysicalDrive";
+    
+    /* Generic Harddisk path */
+    const wchar_t HARDDISK_PATH[] = L"\\Device\\Harddisk";
+    
+    /* Generic Partition Sub-Path */
+    const wchar_t PARTITION_SUBPATH[] = L"\\Partition";
     
     /**
      * Convert the WINAPI Geometry to internally used class
@@ -75,6 +89,7 @@ namespace rawio
         return result;
     }
     
+    
     void DiskManager::readDrive( const wchar_t letter )
     {                
         ::std::wstring userPath;
@@ -105,7 +120,7 @@ namespace rawio
         const TPhysicalDiskId id = partition.getDiskId();
         DiskGeometry geom;
         
-        ::std::wstring path( P_DRIVE_PATH );
+        ::std::wstring path( PHY_DRIVE_PATH );
         path.append( ::std::to_wstring( id ) );
 
         DeviceFile phyDisk;    
