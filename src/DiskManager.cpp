@@ -15,6 +15,7 @@
 #include <iostream>
 
 #include "Windows.h"
+#include <Winioctl.h>
 
 #include "api/DiskManager.h"
 #include "api/IProgressListener.h"
@@ -40,7 +41,7 @@ namespace
     const wchar_t PHY_DRIVE_PATH[] = L"\\\\.\\PhysicalDrive";
     
     /* Generic Harddisk path */
-    const wchar_t HARDDISK_PATH[] = L"\\Device\\Harddisk";
+    const wchar_t HARDDISK_PATH[] = L"\\\\?\\GLOBALROOT\\Device\\Harddisk";
     
     /* Generic Partition Sub-Path */
     const wchar_t PARTITION_SUBPATH[] = L"\\Partition";
@@ -57,6 +58,35 @@ namespace
             uint64_t( geometry.SectorsPerTrack ); 
         return ::rawio::DiskGeometry( sectorCount, geometry.BytesPerSector );
     }    
+    
+    /**
+     * Make Physical Drive path
+     * @param id
+     * @return Path
+     */
+    ::std::wstring MkPhyDrvPath( const size_t id )
+    {
+        ::std::wstring path( PHY_DRIVE_PATH );
+        path.append( ::std::to_wstring( id ) );
+        
+        return ::std::move( path );
+    }
+    
+    /**
+     * Make Partition path
+     * @param id
+     * @param n
+     * @return Path
+     */
+    ::std::wstring MkPartitionPath( const size_t id, const size_t n )
+    {
+        ::std::wstring path( HARDDISK_PATH );
+        path.append( ::std::to_wstring( id ) );
+        path.append( PARTITION_SUBPATH );
+        path.append( ::std::to_wstring( n ) );
+        
+        return ::std::move( path );
+    }    
 }
 
 namespace rawio
@@ -66,54 +96,41 @@ namespace rawio
     {
     }
     
-    bool DiskManager::init()
-    {
-        bool result = false;
+    void DiskManager::init()
+    {       
+        DeviceFile phyDisk;
+        DeviceFile partition;
         
-        const DWORD logicalDrives = GetLogicalDrives();                
-        
-        if ( 0U != logicalDrives )
+        for ( size_t i = 0U; i < MAX_PHY_DISK_COUNT; i++ )
         {
-            wchar_t driveLetter = L'A';
-            for ( size_t i = 0U; i < MAX_DRIVES_COUNT; i++ )
+            if ( phyDisk.open( ::MkPhyDrvPath( i ) ) )
             {
-                if ( IS_BIT( logicalDrives, i ) )
-                {
-                    readDrive( driveLetter + i );    
-                }                    
-            }
-            LOG_I( L"Disk(s): " << m_disks.size() << L", Partition(s): " << m_partitions.size() );
-            result = true;
-        }
-        
-        return result;
-    }
-    
-    
-    void DiskManager::readDrive( const wchar_t letter )
-    {                
-        ::std::wstring userPath;
-        userPath.push_back( letter );
-        userPath.append( L":\\" );
-        
-        const auto extents = PartitionIO( letter ).getVolumeLocation();
-        
-        if ( extents.m_diskId != INVALID_DISKID )
-        {
-            LOG_I( L"Adding Disk No.: " << extents.m_diskId 
-                    << L" / Part.: " << letter 
-                    << L" / Type: " << GetDriveTypeW( userPath.c_str() )
-                    << L" / Size: " << extents.m_length / ( 1024 * 1024 )
-                    << L" / Offset: " << extents.m_offset );
+                m_disks.insert( i );
+                phyDisk.close();
+                
+                for( size_t j = 0U; j < MAX_PARTITION_COUNT; j++ )
+                {                    
+                    if ( partition.open( ::MkPartitionPath( i, j ) ) )
+                    {
+                        VOLUME_DISK_EXTENTS extents;
+                        PARTITION_INFORMATION_EX information;                        
+                        
+                        partition.ioCtl( IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS, extents );
+                        partition.ioCtl( IOCTL_DISK_GET_PARTITION_INFO_EX , information );
+                        
+                        partition.close();
 
-            m_disks.insert( extents.m_diskId );
-            m_partitions.push_back( PartitionInfo( letter, extents ) );
+                        const uint64_t offset = extents.Extents[0].StartingOffset.QuadPart;
+                        const uint64_t length = extents.Extents[0].ExtentLength.QuadPart;
+                        
+                        m_partitions.push_back( PartitionInfo( information.PartitionStyle, VolumeLocation( i, offset, length ) ) );
+                    }
+                }               
+            }
         }
-        else
-        {
-            LOG_E( L"Volume '" << userPath << L"' is not supported" );
-        }                        
-    }
+        
+        LOG_I( L"Disk(s): " << m_disks.size() << L", Partition(s): " << m_partitions.size() );                        
+    }       
         
     PhysicalDiskInfo DiskManager::getDiskInfo( const PartitionInfo& partition ) const
     {        

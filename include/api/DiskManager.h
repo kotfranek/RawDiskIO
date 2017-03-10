@@ -31,7 +31,7 @@ namespace rawio
         /**
          * Initialize the engine
          */
-        bool init();
+        void init();
         
         /**
          * Expose partition information.
@@ -82,11 +82,6 @@ namespace rawio
         virtual ~DiskManager();
                 
     private:
-        /**
-         * Get Device info for the given Logical Drive
-         * @param letter
-         */
-        void readDrive( const wchar_t letter );
         /* Actual disk devices */
         TDisksSet m_disks;
         

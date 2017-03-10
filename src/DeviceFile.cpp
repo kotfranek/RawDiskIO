@@ -62,7 +62,7 @@ bool DeviceFile::ioCtl( const DWORD ctlCode, void* output, size_t size )
         }
         else
         {
-            LOG_E( L"IoControl failed: " << ::GetLastError() << L"(" << ctlCode << L"," << output << L"," << size << L")" );
+            LOG_E( L"IoControl failed: " << ::GetLastError() << L"(" << ctlCode << L"," << size << L"," << readB << L")" );
         }
     }    
 

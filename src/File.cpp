@@ -57,7 +57,7 @@ bool File::open(const ::std::wstring& path, const OpenParameters& params )
         }
         else
         {
-            LOG_E( L"Error opening '" << path << L"': " << ::GetLastError() );
+            //LOG_E( L"Error opening '" << path << L"': " << ::GetLastError() );
         }
     }
     

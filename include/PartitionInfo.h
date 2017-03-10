@@ -18,14 +18,14 @@ namespace rawio
 {
     class PartitionInfo {
     public:
-        explicit PartitionInfo( const wchar_t letter, const VolumeLocation& location );
+        explicit PartitionInfo( const uint8_t type, const VolumeLocation& location );
         
         /**
          * Get partition letter
          */
-        wchar_t getLetter() const
+        uint8_t getType() const
         {
-            return m_letter;
+            return m_type;
         }
         
         /**
@@ -35,7 +35,7 @@ namespace rawio
          */
         bool isLetter( const wchar_t letter ) const
         {
-            return letter == getLetter();
+            return letter == getType();
         }
         
         /**
@@ -59,8 +59,8 @@ namespace rawio
         
         virtual ~PartitionInfo();
     private:        
-        /* Logical Partition letter */
-        wchar_t m_letter;
+        /* Partition type */
+        uint8_t m_type;
         
         /* Volume location */
         VolumeLocation m_vLoc;

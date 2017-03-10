@@ -17,8 +17,8 @@
 namespace rawio
 {
 
-PartitionInfo::PartitionInfo( const wchar_t letter, const VolumeLocation& location ) 
-    : m_letter( letter )
+PartitionInfo::PartitionInfo( const uint8_t type, const VolumeLocation& location ) 
+    : m_type( type )
     , m_vLoc( location )
 {
 }

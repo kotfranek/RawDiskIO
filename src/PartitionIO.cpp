@@ -85,7 +85,7 @@ PartitionIO::PartitionIO(const wchar_t letter)
 }
 
 PartitionIO::PartitionIO( const PartitionInfo& info )
-    : PartitionIO( info.getLetter() )
+    : PartitionIO( info.getType() )
 {    
     }
 
