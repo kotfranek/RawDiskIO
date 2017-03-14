@@ -23,9 +23,9 @@ namespace rawio
         /**
          * Get partition letter
          */
-        uint8_t getType() const
+        uint8_t getStyle() const
         {
-            return m_type;
+            return m_style;
         }
         
         /**
@@ -35,7 +35,7 @@ namespace rawio
          */
         bool isLetter( const wchar_t letter ) const
         {
-            return letter == getType();
+            return letter == getStyle();
         }
         
         /**
@@ -60,7 +60,7 @@ namespace rawio
         virtual ~PartitionInfo();
     private:        
         /* Partition type */
-        uint8_t m_type;
+        uint8_t m_style;
         
         /* Volume location */
         VolumeLocation m_vLoc;

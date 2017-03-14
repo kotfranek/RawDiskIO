@@ -112,16 +112,12 @@ namespace rawio
                 {                    
                     if ( partition.open( ::MkPartitionPath( i, j ) ) )
                     {
-                        VOLUME_DISK_EXTENTS extents;
-                        PARTITION_INFORMATION_EX information;                        
-                        
-                        partition.ioCtl( IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS, extents );
-                        partition.ioCtl( IOCTL_DISK_GET_PARTITION_INFO_EX , information );
-                        
+                        PARTITION_INFORMATION_EX information;                                                
+                        partition.ioCtl( IOCTL_DISK_GET_PARTITION_INFO_EX , information );                        
                         partition.close();
 
-                        const uint64_t offset = extents.Extents[0].StartingOffset.QuadPart;
-                        const uint64_t length = extents.Extents[0].ExtentLength.QuadPart;
+                        const uint64_t offset = information.StartingOffset.QuadPart;
+                        const uint64_t length = information.PartitionLength.QuadPart;
                         
                         m_partitions.push_back( PartitionInfo( information.PartitionStyle, VolumeLocation( i, offset, length ) ) );
                     }
