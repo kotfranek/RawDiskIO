@@ -47,24 +47,7 @@ namespace rawio
     public:
         PartitionIO( const wchar_t letter );
         PartitionIO( const PartitionInfo& info );
-        
-        /**
-         * Retrieve the volume location set
-         * @return A copy of VolumeLocation data
-         */
-        VolumeLocation getVolumeLocation() const;
-        
-        /**
-         * Retrieve the PhysicalDisk Id
-         * @return 
-         */
-        TPhysicalDiskId getDiskId() const;
-        
-        /**
-         * Get partition length in bytes
-         */
-        uint64_t getLength() const;
-        
+                        
         /**
          * Dump the raw partition content
          * @param file
